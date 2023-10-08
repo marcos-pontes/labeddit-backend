@@ -27,7 +27,7 @@ Labook is a social network aimed at promoting connection and interaction among p
     - [ ]  like / dislike post
 
 ## Link to postman documentation
-- https://documenter.getpostman.com/view/26594016/2s9Y5YRhaj
+- https://documenter.getpostman.com/view/26594016/2s9YJgULa9
 
 # Example Request
 
