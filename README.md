@@ -18,7 +18,10 @@ Labook is a social network aimed at promoting connection and interaction among p
     - [ ]  signup
     - [ ]  login
     - [ ]  create post
+    - [ ]  create comment
     - [ ]  get posts
+    - [ ]  get comment
+    - [ ]  get posts by id
     - [ ]  edit post
     - [ ]  delete post
     - [ ]  like / dislike post
