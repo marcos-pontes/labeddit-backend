@@ -44,6 +44,9 @@ export class UserDatabaseMock extends BaseDatabase {
   public async returnUserName(id: string): Promise<string> {
     return "";
   }
+  public async returnUserId(id: string): Promise<string> {
+    return "";
+  }
 
   public async insertUser(newUserDB: UserDB): Promise<void> {}
 

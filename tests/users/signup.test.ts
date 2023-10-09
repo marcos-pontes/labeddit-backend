@@ -1,11 +1,11 @@
 import { ZodError } from "zod";
-import { UserBusiness } from "../../src/business/UserBusiness";
-import { SignupSchema } from "../../src/dtos/user/signup.dto";
+import { UserBusiness } from "../../src/business/UsersBusiness";
+import { SignupSchema } from "../../src/dtos/Users/signup.dto";
 import { HashManagerMock } from "../mocks/HashManagerMock";
 import { IdGeneratorMock } from "../mocks/IdGeneratorMock";
 import { TokenManagerMock } from "../mocks/TokenManagerMock";
 import { UserDatabaseMock } from "../mocks/UserDatabaseMock";
-import { BadRequestError } from "../../src/errors/BadRequestError";
+import { BadRequestError } from "../../src/error/BadRequestError";
 
 describe("Testando signup", () => {
   const userBusiness = new UserBusiness(
@@ -25,7 +25,7 @@ describe("Testando signup", () => {
     const output = await userBusiness.signup(input);
 
     expect(output).toEqual({
-      message: "Cadastro realizado com sucesso",
+      message: "Registration done successfully",
       token: "token-mock",
     });
   });
@@ -42,7 +42,7 @@ describe("Testando signup", () => {
     } catch (error) {
       if (error instanceof ZodError) {
         expect(error.issues[0].message).toBe(
-          "Nome deve conter pelo menos 2 caracteres."
+          "String must contain at least 3 character(s)"
         );
       }
     }
@@ -62,7 +62,7 @@ describe("Testando signup", () => {
     } catch (error) {
       if (error instanceof BadRequestError) {
         expect(error.statusCode).toBe(400);
-        expect(error.message).toBe("Email já cadastrado");
+        expect(error.message).toBe("'Email' already registered");
       }
     }
   });

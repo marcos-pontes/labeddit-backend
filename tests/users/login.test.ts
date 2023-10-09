@@ -1,11 +1,12 @@
 import { ZodError } from "zod";
-import { UserBusiness } from "../../src/business/UserBusiness";
-import { LoginSchema } from "../../src/dtos/user/login.dto";
+import { UserBusiness } from "../../src/business/UsersBusiness";
+import { LoginSchema } from "../../src/dtos/Users/login.dto";
 import { HashManagerMock } from "../mocks/HashManagerMock";
 import { IdGeneratorMock } from "../mocks/IdGeneratorMock";
 import { TokenManagerMock } from "../mocks/TokenManagerMock";
 import { UserDatabaseMock } from "../mocks/UserDatabaseMock";
-import { NotFoundError } from "../../src/errors/NotFoundError";
+import { NotFoundError } from "../../src/error/NotFoundError";
+import { BadRequestError } from "../../src/error/BadRequestError";
 
 describe("Testando login", () => {
   const userBusiness = new UserBusiness(
@@ -25,6 +26,7 @@ describe("Testando login", () => {
 
     expect(output).toEqual({
       token: "token-mock-fulano",
+      "message": "Login successful"
     });
   });
 
@@ -67,10 +69,10 @@ describe("Testando login", () => {
 
     await expect(async () => {
       await userBusiness.login(input);
-    }).rejects.toThrow(NotFoundError);
+    }).rejects.toThrow(BadRequestError);
 
     await expect(async () => {
       await userBusiness.login(input);
-    }).rejects.toThrow("Email ou Senha inválidos");
+    }).rejects.toThrow("\"Email\" or \"Password\" invalid");
   });
 });

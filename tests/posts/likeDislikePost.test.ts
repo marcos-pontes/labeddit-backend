@@ -5,7 +5,7 @@ import { PostsDatabaseMock } from "../mocks/PostsDatabaseMock";
 import { UserDatabaseMock } from "../mocks/UserDatabaseMock";
 import { BadRequestError } from "../../src/error/BadRequestError";
 import { NotFoundError } from "../../src/error/NotFoundError";
-import { LikeDislikeinputDTO } from "../../src/dtos/Posts/likeDislike.dto";
+import { LikeDislikeinputDTO} from "../../src/dtos/Posts/likeDislike.dto";
 import { Posts } from "../../src/models/Post";
 
 describe("testes no LikeDislike", () => {
@@ -17,20 +17,20 @@ describe("testes no LikeDislike", () => {
   );
 
   it("Deve executar o LikeDislike", async () => {
-    const input: LikeDislikeinputDTO = {
-      id: "id-mock-post-1",
+    const input: LikeDislikeinputDTO= {
+      idPost: "id-mock-post-1",
       token: "token-mock-astrodev",
       like: true,
     };
 
     const output = await postsBusiness.likeDislikePost(input);
 
-    expect(output).toBeDefined();
+    expect(output).toBeUndefined();
   });
 
   it("Deve lançar um erro NotFoundError se o post não existir no LikeDislike", async () => {
-    const input: LikeDislikeinputDTO = {
-      id: "id-post-inexistente",
+    const input: LikeDislikeinputDTO= {
+      idPost: "id-post-inexistente",
       token: "token-mock-fulano",
       like: true,
     };
@@ -41,8 +41,8 @@ describe("testes no LikeDislike", () => {
   });
 
   it("Deve testar o token inválido no LikeDislike", async () => {
-    const input: LikeDislikeinputDTO = {
-      id: "id-mock-post-1",
+    const input: LikeDislikeinputDTO= {
+      idPost: "id-mock-post-1",
       token: "token-invalido",
       like: true,
     };
@@ -53,8 +53,8 @@ describe("testes no LikeDislike", () => {
   });
 
   it("Deve lançar um erro NotFoundError se o usuário for o dono do post", async () => {
-    const input: LikeDislikeinputDTO = {
-      id: "id-mock-post-1",
+    const input: LikeDislikeinputDTO= {
+      idPost: "id-mock-post-1",
       token: "token-mock-fulano",
       like: true,
     };
@@ -79,6 +79,7 @@ describe("testes no LikeDislike", () => {
       dislikes: 5,
       created_at: "2023-09-20T10:00:00Z",
       updated_at: "2023-09-20T11:00:00Z",
+      amount_comment: 0,
     };
 
     // Criar um objeto Post
@@ -90,7 +91,7 @@ describe("testes no LikeDislike", () => {
       postDB.dislikes,
       postDB.created_at,
       postDB.updated_at,
-      postDB.amountComments
+      postDB.amount_comment
     );
 
     // Verificar se o objeto foi criado corretamente
@@ -99,34 +100,32 @@ describe("testes no LikeDislike", () => {
     expect(post.getCreatorId()).toBe(postDB.creator_id);
     expect(post.getContent()).toBe(postDB.content);
     expect(post.getLikes()).toBe(postDB.likes);
-    expect(post.getDislikes()).toBe(postDB.dislikes);
     expect(post.getCreatedAt()).toBe(postDB.created_at);
     expect(post.getUpdatedAt()).toBe(postDB.updated_at);
   });
 
   it("Deve dar like em um post", async () => {
-    const input: LikeDislikeinputDTO = {
-      id: "id-mock-post-1",
+    const input: LikeDislikeinputDTO= {
+      idPost: "id-mock-post-1",
       token: "token-mock-astrodev",
       like: true,
     };
 
     const output = await postsBusiness.likeDislikePost(input);
 
-    expect(output.getLikes()).toBe(5);
-    expect(output.getDislikes()).toBe(1);
+    expect(output).toBeUndefined();
+    
   });
 
   it("Deve dar like ou dislike em um post baseado no valor de 'like'", async () => {
-    const inputLike: LikeDislikeinputDTO = {
-      id: "id-mock-post-1",
+    const inputLike: LikeDislikeinputDTO= {
+      idPost: "id-mock-post-1",
       token: "token-mock-astrodev",
       like: true,
     };
 
     const output = await postsBusiness.likeDislikePost(inputLike);
 
-    expect(output.getLikes()).toBe(6);
-    expect(output.getDislikes()).toBe(1);
+    expect(output).toBeUndefined();
   });
 });

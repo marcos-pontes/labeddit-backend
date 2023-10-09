@@ -1,5 +1,5 @@
 import { CommentDB } from "../models/Comments";
-import { COMMENT_RESULT, POST_LIKE, PostsDB, PostsDBAmount, likeDeslikeDB } from "../models/Post";
+import {  POST_LIKE, PostsDB, PostsDBAmount, likeDeslikeDB } from "../models/Post";
 
 import { BaseDatabase } from "./BaseDatabase";
 
@@ -29,15 +29,7 @@ export class PostsDatabase extends BaseDatabase {
     return data;
   }
 
-  public calculateCommentAmount = async (post_id: string): Promise<number> => {
-    const [result]: Array<{ total_amount: number }> =
-      await BaseDatabase.connection(PostsDatabase.TABLE_COMMENT)
-        .select()
-        .where({ post_id })
-        .sum("amount as total_amount");
-
-    return result ? result.total_amount : 0;
-  };
+  
 
   public async updatePost(postsDB: PostsDB) {
     await BaseDatabase.connection(PostsDatabase.TABLE_POST)
@@ -45,7 +37,7 @@ export class PostsDatabase extends BaseDatabase {
       .where({ id: postsDB.id });
   }
 
-  public async findPostById(idToEdit: string): Promise<PostsDBAmount > {
+  public async findPostById(idToEdit: string): Promise<PostsDBAmount |undefined > {
     const postsDB: PostsDBAmount[] = await BaseDatabase.connection(
       PostsDatabase.TABLE_POST
     ).where({ id: idToEdit });
@@ -54,7 +46,7 @@ export class PostsDatabase extends BaseDatabase {
 
     return postDB;
   }
-  public async findPostByIdAmount(idToEdit: string): Promise<PostsDBAmount > {
+  public async findPostByIdAmount(idToEdit: string): Promise<PostsDBAmount | undefined > {
     const postsDB: PostsDBAmount[] = await BaseDatabase.connection(
       PostsDatabase.TABLE_POST
     ).where({ id: idToEdit });
@@ -89,25 +81,7 @@ export class PostsDatabase extends BaseDatabase {
       return POST_LIKE.ALREADY_DISLIKED;
     }
   };
-  public findAmoutComment = async (
-    likeDislikeDB: likeDeslikeDB
-  ): Promise<void> => {
-    const [result]: Array<likeDeslikeDB | undefined> =
-      await BaseDatabase.connection(PostsDatabase.TABLE_COMMENT_AMOUNT)
-        .select()
-        .where({
-          user_id: likeDislikeDB.user_id,
-          post_id: likeDislikeDB.post_id,
-        });
-
-    /* if (result === undefined) {
-      return undefined;
-    } else if (result.like === 1) {
-      return POST_LIKE.ALREADY_LIKED;
-    } else {
-      return POST_LIKE.ALREADY_DISLIKED;
-    } */
-  };
+ 
 
   public removeLikeDislike = async (
     likeDislikeDB: likeDeslikeDB
@@ -146,11 +120,5 @@ export class PostsDatabase extends BaseDatabase {
       likeDislikeDB
     );
   };
-  public insertAmoutComment = async (
-    likeDislikeDB: likeDeslikeDB
-  ): Promise<void> => {
-    await BaseDatabase.connection(PostsDatabase.TABLE_COMMENT_AMOUNT).insert(
-      likeDislikeDB
-    );
-  };
+  
 }

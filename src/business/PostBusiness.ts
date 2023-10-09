@@ -54,6 +54,12 @@ export class PostsBusiness {
 
     const id = this.idGenerator.generatorId();
 
+    const postDBExists = await this.postsDatabase.findPostById(id);
+
+    if (postDBExists) {
+      throw new BadRequestError("'id' já existe");
+    }
+
     const newPost = new Posts(
       id,
       payload.id,
@@ -73,6 +79,7 @@ export class PostsBusiness {
 
     return output;
   };
+
   public createComment = async (
     input: CreateCommentInputDTO
   ): Promise<CreateCommentOutputDTO> => {
@@ -100,6 +107,9 @@ export class PostsBusiness {
     
    const postsDB =  await this.postsDatabase.findPostByIdAmount(postId)
     await this.postsDatabase.insertComment(newPostToDB);
+    if (!postsDB) {
+      throw new BadRequestError("Post não encontrado");
+    }
 
     await this.postsDatabase.updateAmountComment(postId, postsDB.amount_comments +1) 
 
@@ -110,7 +120,7 @@ export class PostsBusiness {
 
   public getPost = async (
     input: GetPostsInputDTO
-  ): Promise<GetPostsOutputDTO> => {
+  ): Promise<GetPostsOutputDTO> => { 
     const { token } = input;
 
     const payload = this.tokenManager.getPayload(token);
@@ -234,84 +244,7 @@ export class PostsBusiness {
     return output;
   };
 
-  public editPosts = async (
-    input: EditPostsInputDTO
-  ): Promise<EditPostsOutputDTO> => {
-    const { idToEdit, content, token } = input;
 
-    const payload = this.tokenManager.getPayload(token);
-    if (!payload) {
-      throw new BadRequestError("token invalid");
-    }
-
-    const postToEditDB = await this.postsDatabase.findPostById(idToEdit);
-
-    if (!postToEditDB) {
-      throw new NotFoundError("'id' not found");
-    }
-
-    const updated_at = new Date().toISOString();
-
-    const post = new Posts(
-      postToEditDB.id,
-      postToEditDB.creator_id,
-      content,
-      postToEditDB.likes,
-      postToEditDB.dislikes,
-      postToEditDB.created_at,
-      updated_at,
-      postToEditDB.amount_comments
-    );
-    const updatePost = post.toDBModel();
-
-    if (payload.id !== postToEditDB.creator_id) {
-      throw new BadRequestError(
-        "You do not have permission to edit this post."
-      );
-    }
-
-    await this.postsDatabase.updatePost(updatePost);
-
-    const output: EditPostsOutputDTO = undefined;
-    return output;
-  };
-
-  public deletePost = async (
-    input: DeletePostsInputDTO
-  ): Promise<DeletePostsoutputDTO> => {
-    const { idToDelete, token } = input;
-
-    const payload = this.tokenManager.getPayload(token);
-    if (!payload) {
-      throw new BadRequestError("token invalid");
-    }
-
-    const postsDBFindById = await this.postsDatabase.findPostById(idToDelete);
-
-    if (!postsDBFindById) {
-      throw new BadRequestError("'id' to delete not found");
-    }
-
-    const postToDeleteDB = await this.postsDatabase.findPostById(idToDelete);
-
-    if (!postToDeleteDB) {
-      throw new NotFoundError("'id' not found");
-    }
-
-    if (payload.id !== postToDeleteDB.creator_id) {
-      if (payload.role !== USER_ROLES.ADMIN) {
-        throw new BadRequestError(
-          "You do not have permission to edit this post."
-        );
-      }
-    }
-
-    await this.postsDatabase.deletePostById(idToDelete);
-
-    const output: DeletePostsoutputDTO = undefined;
-
-    return output;
-  };
 
   public likeDislikePost = async (
     input: LikeDislikeinputDTO
